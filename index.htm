@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>
+    var overallMargin = 10;
+    var embeddedMargin = 10;
+    var overallWidth = 800;
+    var overallHeight = 100;
+    var extraTextSpacing = 5;
+    var outerColor = "#0000aa";
+    var rangeColor = "#00aa00";
+    var textColor = "#666666";
+
+    function draw() {
+       rect(overallMargin,overallWidth,overallHeight,outerColor,false);
+       rect(overallMargin + embeddedMargin,50,30,rangeColor, false);
+       text();
+    }
+
+    function text() {
+      var canvas = document.getElementById("canvas");
+      if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle=textColor;
+        ctx.font="15px Helvetica";
+        var maxI = 10;
+        for(var i=1;i<=maxI;i++)
+          ctx.fillText(i,overallMargin+embeddedMargin+(i-1)*((overallWidth/maxI)+extraTextSpacing),overallHeight);
+      }
+    }
+
+    function getNumericMargin(i) {
+
+    }
+
+    function rect(margin,width,height,color,fill) {
+      var canvas = document.getElementById("canvas");
+      if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = color;
+        ctx.strokeStyle = color;
+        if (fill)
+          ctx.fillRect (margin,margin,width,height);
+        else
+          ctx.strokeRect (margin,margin,width,height);
+      }
+    }
+  </script>
+</head>
+
+<body onload="draw();">
+  <canvas id="canvas" width="1100" height="150"></canvas>
+  <br/>
+  <input type="text" id="peerValues"/><button value='draw' onclick="draw();"/>
+</body>
+
+</html>
