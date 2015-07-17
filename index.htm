@@ -28,7 +28,7 @@
        var xOffset = getNumericMargin(getPeerLow()) + fontSize/3;
        var width = getNumericMargin(getPeerHigh()) - getNumericMargin(getPeerLow());
        var height = 30;
-       rect(xMargin, yMargin, xOffset, width, height, rangeColor, false);
+       rect(xMargin, yMargin, xOffset, width, height, rangeColor, true);
        text();
 
     }
@@ -80,10 +80,25 @@
 
         ctx.fillStyle = color;
         ctx.strokeStyle = color;
-        if (fill)
+        if (fill) {
+          var gradient = ctx.createLinearGradient(xMargin+x, yMargin, xMargin+x+width, yMargin+height);
+
+          // x  ave - low
+          // -  ---------
+          // 1  high - low
+
+          var colorSpikeStop = (getPeerAverage() - getPeerLow()) / (getPeerHigh() - getPeerLow());
+
+          gradient.addColorStop(0, '#006600');
+          gradient.addColorStop(colorSpikeStop, '#00ff00');
+          gradient.addColorStop(1.0, '#006600');
+
+          ctx.fillStyle = gradient;
           ctx.fillRect (xMargin+x,yMargin,width,height);
-        else
+        }
+        else {
           ctx.strokeRect (xMargin+x,yMargin,width,height);
+        }
       }
     }
   </script>
