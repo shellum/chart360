@@ -32,6 +32,10 @@
        var yMargin = overallMargin + embeddedYMargin
        var xOffset = getNumericMargin(getPeerLow()) + fontSize/3;
        var width = getNumericMargin(getPeerHigh()) - getNumericMargin(getPeerLow());
+       if (width == 0) {
+         xOffset = getNumericMargin(getPeerLow() - 0.2) + fontSize/3;
+         width = getNumericMargin(getPeerHigh() + 0.2) - getNumericMargin(getPeerLow() - 0.2);
+       }
        var height = 30;
        rect(xMargin, yMargin, xOffset, width, height, "", true);
        text();
@@ -122,6 +126,7 @@
           // 1  high - low
 
           var colorSpikeStop = (getPeerAverage() - getPeerLow()) / (getPeerHigh() - getPeerLow());
+          if (isNaN(colorSpikeStop)) colorSpikeStop = 0.5;
 
           gradient.addColorStop(0, gradientOuterColor);
           gradient.addColorStop(colorSpikeStop, gradientInnerColor);
@@ -156,7 +161,7 @@
       canvas.setAttribute("width","1100");
       canvas.setAttribute("height","150");
       canvas.setAttribute("id",_attribute + "Canvas");
-      
+
       var controlMarker = document.getElementById("controlMarker");
       var canvasMarker = document.getElementById("canvasMarker");
       document.body.insertBefore(peerRatingsDesc, controlMarker);
@@ -170,12 +175,13 @@
       document.body.insertBefore(document.createElement("br"), controlMarker);
       document.body.insertBefore(canvas,canvasMarker);
     }
+    var types=['Is Kind','Helps','Codes Cleanly','Tests','Automates','Iterates'];
   </script>
 </head>
 
-<body onload="var types=['kind','helpful','clean','tested','automated','iterative'];types.map(function(t) {addControls(t);draw(t);});">
+<body onload="types.map(function(t) {addControls(t);});">
   <div id="controlMarker"></div>
-  <button onclick="draw('kind');">Draw</button><br/>
+  <button onclick="types.map(function(t) {draw(t);});">Draw</button><br/>
   <div id="canvasMarker"></div>
   <canvas id="kindCanvas" width="1100" height="150"></canvas>
   <br/><br/>
