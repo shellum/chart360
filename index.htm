@@ -4,18 +4,55 @@
 <head>
   <script>
     var overallMargin = 10;
-    var embeddedMargin = 10;
+    var embeddedYMargin = 25;
+    var textMargin = 10;
     var overallWidth = 800;
     var overallHeight = 100;
     var extraTextSpacing = 5;
     var outerColor = "#0000aa";
     var rangeColor = "#00aa00";
     var textColor = "#666666";
+    var maxI = 10;
+    var fontSize = 15;
 
     function draw() {
-       rect(overallMargin,overallWidth,overallHeight,outerColor,false);
-       rect(overallMargin + embeddedMargin,50,30,rangeColor, false);
+       rect(overallMargin,overallMargin,0, overallWidth,overallHeight,outerColor,false);
+       var peerAverage = getPeerAverage();
+       console.log("peerAverage: " + peerAverage);
+       console.log("peerMin: " + getPeerLow());
+       console.log("peerMax: " + getPeerHigh());
+       var peerLowCoordinate = getNumericMargin(peerAverage);
+       console.log("peerMargin is " + peerLowCoordinate);
+       var xMargin = 0;
+       var yMargin = overallMargin + embeddedYMargin
+       var xOffset = getNumericMargin(getPeerLow()) + fontSize/3;
+       var width = getNumericMargin(getPeerHigh()) - getNumericMargin(getPeerLow());
+       var height = 30;
+       rect(xMargin, yMargin, xOffset, width, height, rangeColor, false);
        text();
+
+    }
+
+    function getPeerAverage() {
+      var peerValues = document.getElementById("peerValues").value;
+      var peerArray = peerValues.split(",");
+      var total = 0.0;
+      peerArray.map(function(peerValue) {
+        total += parseFloat(peerValue);
+      });
+      return (total / peerArray.length).toFixed(1);
+    }
+
+    function getPeerHigh() {
+      var peerValues = document.getElementById("peerValues").value;
+      var peerArray = peerValues.split(",");
+      return Math.max.apply(Math, peerArray);
+    }
+
+    function getPeerLow() {
+      var peerValues = document.getElementById("peerValues").value;
+      var peerArray = peerValues.split(",");
+      return Math.min.apply(Math, peerArray);
     }
 
     function text() {
@@ -23,18 +60,20 @@
       if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
         ctx.fillStyle=textColor;
-        ctx.font="15px Helvetica";
-        var maxI = 10;
-        for(var i=1;i<=maxI;i++)
-          ctx.fillText(i,overallMargin+embeddedMargin+(i-1)*((overallWidth/maxI)+extraTextSpacing),overallHeight);
+        ctx.font=fontSize + "px Helvetica";
+        for(var i=1;i<=maxI;i++) {
+          ctx.fillText(i,getNumericMargin(i),overallHeight);
+          console.log("writing " + i + " at " + getNumericMargin(i));
+        }
       }
     }
 
     function getNumericMargin(i) {
-
+      return overallMargin+textMargin+(i-1)*((overallWidth/maxI)+extraTextSpacing);
     }
 
-    function rect(margin,width,height,color,fill) {
+    function rect(xMargin,yMargin,x, width,height,color,fill) {
+      console.log("rect at " + (xMargin+x) + " , " + width+", " + height);
       var canvas = document.getElementById("canvas");
       if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
@@ -42,9 +81,9 @@
         ctx.fillStyle = color;
         ctx.strokeStyle = color;
         if (fill)
-          ctx.fillRect (margin,margin,width,height);
+          ctx.fillRect (xMargin+x,yMargin,width,height);
         else
-          ctx.strokeRect (margin,margin,width,height);
+          ctx.strokeRect (xMargin+x,yMargin,width,height);
       }
     }
   </script>
@@ -53,7 +92,7 @@
 <body onload="draw();">
   <canvas id="canvas" width="1100" height="150"></canvas>
   <br/>
-  <input type="text" id="peerValues"/><button value='draw' onclick="draw();"/>
+  <input type="text" value="6,4,9,3" id="peerValues"/><button onclick="draw();">Draw</button>
 </body>
 
 </html>
