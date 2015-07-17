@@ -39,12 +39,12 @@
        var height = 30;
        rect(xMargin, yMargin, xOffset, width, height, "", true);
        text();
-       drawMarkerLine(getManagerRating(),managerColor);
-       drawMarkerLine(getSelfRating(),selfColor);
+       drawMarkerLine(getManagerRating(),managerColor,0);
+       drawMarkerLine(getSelfRating(),selfColor,55);
 
     }
 
-    function drawMarkerLine(rating,color) {
+    function drawMarkerLine(rating,color,y) {
       var x = getNumericMargin(rating) + fontSize/3;
       console.log("managerRating: " + rating);
       var canvas = document.getElementById(attribute + "Canvas");
@@ -54,8 +54,10 @@
         ctx.strokeStyle = color;
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(x, overallMargin + 10);
-        ctx.lineTo(x, 75);
+        if (y != 0) y-=(overallMargin+10);
+        ctx.moveTo(x, overallMargin + 10 + y);
+        ctx.lineTo(x, y+45);
+        console.log("plotting: " + (overallMargin + 10 + y) + " to " + (y+45) );
         ctx.stroke();
       }
     }
