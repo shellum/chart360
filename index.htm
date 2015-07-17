@@ -17,7 +17,10 @@
     var selfColor = "rgb(108,108,108)";
     var maxI = 10;
     var fontSize = 15;
+    var selfRatingMarkerDepth = 55;
+    var managerRatingMarkerDepth = 0;
     var attribute = "";
+    var font = "Helvetica";
 
     function draw(_attribute) {
        attribute = _attribute;
@@ -39,8 +42,8 @@
        var height = 30;
        rect(xMargin, yMargin, xOffset, width, height, "", true);
        text();
-       drawMarkerLine(getManagerRating(),managerColor,0);
-       drawMarkerLine(getSelfRating(),selfColor,55);
+       drawMarkerLine(getManagerRating(),managerColor,managerRatingMarkerDepth);
+       drawMarkerLine(getSelfRating(),selfColor,selfRatingMarkerDepth);
 
     }
 
@@ -99,7 +102,7 @@
       if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
         ctx.fillStyle=textColor;
-        ctx.font=fontSize + "px Helvetica";
+        ctx.font=fontSize + "px " + font;
         for(var i=1;i<=maxI;i++) {
           ctx.fillText(i,getNumericMargin(i),overallHeight);
           console.log("writing " + i + " at " + getNumericMargin(i));
@@ -121,27 +124,29 @@
         ctx.fillStyle = color;
         ctx.strokeStyle = color;
         if (fill) {
-          var gradient = ctx.createLinearGradient(xMargin+x, yMargin, xMargin+x+width, yMargin+height);
-
-          // x  ave - low
-          // -  ---------
-          // 1  high - low
-
           var colorSpikeStop = (getPeerAverage() - getPeerLow()) / (getPeerHigh() - getPeerLow());
           if (isNaN(colorSpikeStop)) colorSpikeStop = 0.5;
 
-          gradient.addColorStop(0, gradientOuterColor);
-          gradient.addColorStop(colorSpikeStop, gradientInnerColor);
-          gradient.addColorStop(1.0, gradientOuterColor);
 
-          ctx.fillStyle = gradient;
-          ctx.fillRect (xMargin+x,yMargin,width,height);
+          drawGradient(xMargin+x,yMargin,width,height,colorSpikeStop,ctx);
         }
         else {
           ctx.strokeRect (xMargin+x,yMargin,width,height);
         }
       }
     }
+
+    function drawGradient(startX,startY,width,height,colorSpikeStop,ctx) {
+      var gradient = ctx.createLinearGradient(startX,startY, startX+width, startY+height);
+      gradient.addColorStop(0, gradientOuterColor);
+      gradient.addColorStop(colorSpikeStop-0.2, gradientOuterColor);
+      gradient.addColorStop(colorSpikeStop, gradientInnerColor);
+      gradient.addColorStop(colorSpikeStop+0.2, gradientOuterColor);
+      gradient.addColorStop(1.0, gradientOuterColor);
+      ctx.fillStyle = gradient;
+      ctx.fillRect (startX,startY,width,height);
+    }
+
     function addControls(_attribute) {
       var br = document.createElement("br");
       var peerRatingsBox = document.createElement("input");
@@ -177,18 +182,56 @@
       document.body.insertBefore(document.createElement("br"), controlMarker);
       document.body.insertBefore(canvas,canvasMarker);
     }
+    function drawKey() {
+      var canvas = document.getElementById("keyCanvas");
+      if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+        attribute = "key";
+        ctx.font=fontSize + "px " + font;
+        rect(overallMargin,overallMargin,0, overallWidth,overallHeight,outerColor,false);
+        var gradientStart = getNumericMargin(3) + fontSize/3;
+        var gradientWidth = getNumericMargin(5) - getNumericMargin(3);
+
+        drawGradient(gradientStart,50,gradientWidth,30,0.25,ctx);
+
+        ctx.fillStyle=textColor;
+        ctx.fillText("Peer Reviews",250+fontSize,45+embeddedYMargin);
+
+        ctx.fillStyle=textColor;
+        ctx.fillText("EXAMPLE", getNumericMargin(1),overallMargin+embeddedYMargin);
+        ctx.fillText(4,getNumericMargin(2),overallHeight);
+        ctx.fillText(5,getNumericMargin(3),overallHeight);
+        ctx.fillText(6,getNumericMargin(4),overallHeight);
+        ctx.fillText(7,getNumericMargin(5),overallHeight);
+        ctx.fillText(8,getNumericMargin(6),overallHeight);
+
+        ctx.fillStyle=gradientOuterColor;
+        ctx.fillText("Low",getNumericMargin(3),overallMargin+embeddedYMargin);
+        ctx.fillText("Avg",getNumericMargin(3.5),overallMargin+embeddedYMargin);
+        ctx.fillText("High",getNumericMargin(5),overallMargin+embeddedYMargin);
+
+
+        drawMarkerLine(8,managerColor,managerRatingMarkerDepth);
+        ctx.fillText("<- Manager Rating",getNumericMargin(8.1),overallMargin+embeddedYMargin);
+        drawMarkerLine(8, selfColor,selfRatingMarkerDepth);
+        ctx.fillText("<- Self Rating",getNumericMargin(8.1),45+embeddedYMargin);
+      }
+    }
     var types=['Is Kind','Helps','Codes Cleanly','Tests','Automates','Iterates'];
+    function init() {
+      types.map(function(t) {
+        addControls(t);
+      });
+      drawKey();
+    }
   </script>
 </head>
 
-<body onload="types.map(function(t) {addControls(t);});">
+<body onload="init();">
   <div id="controlMarker"></div>
   <button onclick="types.map(function(t) {draw(t);});">Draw</button><br/>
+  <canvas id="keyCanvas" width="1100" height="150"/></canvas>
   <div id="canvasMarker"></div>
-  <canvas id="kindCanvas" width="1100" height="150"></canvas>
-  <br/><br/>
-  <canvas id="helpfulCanvas" width="1100" height="150"></canvas>
-  <br/><br/>
 </body>
 
 </html>
