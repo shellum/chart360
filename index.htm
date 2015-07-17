@@ -135,15 +135,51 @@
         }
       }
     }
+    function addControls(_attribute) {
+      var br = document.createElement("br");
+      var peerRatingsBox = document.createElement("input");
+      peerRatingsBox.setAttribute("type","text");
+      peerRatingsBox.setAttribute("id",_attribute+"PeerRatings")
+      var peerRatingsDesc = document.createTextNode(_attribute+" - Peer Ratings (CSV):");
+
+      var managerRatingBox = document.createElement("input");
+      managerRatingBox.setAttribute("type","text");
+      managerRatingBox.setAttribute("id",_attribute+"ManagerRating")
+      var managerRatingDesc = document.createTextNode(_attribute+" - Manager Rating:");
+
+      var selfRatingBox = document.createElement("input");
+      selfRatingBox.setAttribute("type","text");
+      selfRatingBox.setAttribute("id",_attribute+"SelfRating")
+      var selfRatingDesc = document.createTextNode(_attribute+" - Self Rating:");
+
+      var canvas = document.createElement("canvas");
+      canvas.setAttribute("width","1100");
+      canvas.setAttribute("height","150");
+      canvas.setAttribute("id",_attribute + "Canvas");
+      
+      var controlMarker = document.getElementById("controlMarker");
+      var canvasMarker = document.getElementById("canvasMarker");
+      document.body.insertBefore(peerRatingsDesc, controlMarker);
+      document.body.insertBefore(peerRatingsBox, controlMarker);
+      document.body.insertBefore(document.createElement("br"), controlMarker);
+      document.body.insertBefore(managerRatingDesc, controlMarker);
+      document.body.insertBefore(managerRatingBox, controlMarker);
+      document.body.insertBefore(document.createElement("br"), controlMarker);
+      document.body.insertBefore(selfRatingDesc, controlMarker);
+      document.body.insertBefore(selfRatingBox, controlMarker);
+      document.body.insertBefore(document.createElement("br"), controlMarker);
+      document.body.insertBefore(canvas,canvasMarker);
+    }
   </script>
 </head>
 
-<body onload="draw('kind');">
-  Kind - Peer Ratings (CSV): <input type="text" value="6,4,9,3" id="kindPeerRatings"/><br/>
-  Kind - Self Rating: <input type="text" value="7" id="kindSelfRating"/><br/>
-  Kind - Manager Rating: <input type="text" value="4" id="kindManagerRating"/><br/>
+<body onload="var types=['kind','helpful','clean','tested','automated','iterative'];types.map(function(t) {addControls(t);draw(t);});">
+  <div id="controlMarker"></div>
   <button onclick="draw('kind');">Draw</button><br/>
+  <div id="canvasMarker"></div>
   <canvas id="kindCanvas" width="1100" height="150"></canvas>
+  <br/><br/>
+  <canvas id="helpfulCanvas" width="1100" height="150"></canvas>
   <br/><br/>
 </body>
 
