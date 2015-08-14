@@ -3,6 +3,7 @@
 
 <head>
   <script>
+  // Nuclear Programming at its finest!
     var overallMargin = 10;
     var embeddedYMargin = 25;
     var textMargin = 10;
@@ -21,6 +22,7 @@
     var managerRatingMarkerDepth = 0;
     var attribute = "";
     var font = "Helvetica";
+    var fontCenterOffset = fontSize/3;
 
     function draw(_attribute) {
        attribute = _attribute;
@@ -33,10 +35,10 @@
        console.log("peerMargin is " + peerLowCoordinate);
        var xMargin = 0;
        var yMargin = overallMargin + embeddedYMargin
-       var xOffset = getNumericMargin(getPeerLow()) + fontSize/3;
+       var xOffset = getNumericMargin(getPeerLow()) + fontCenterOffset;
        var width = getNumericMargin(getPeerHigh()) - getNumericMargin(getPeerLow());
        if (width == 0) {
-         xOffset = getNumericMargin(getPeerLow() - 0.2) + fontSize/3;
+         xOffset = getNumericMargin(getPeerLow() - 0.2) + fontCenterOffset;
          width = getNumericMargin(getPeerHigh() + 0.2) - getNumericMargin(getPeerLow() - 0.2);
        }
        var height = 30;
@@ -183,34 +185,41 @@
       document.body.insertBefore(canvas,canvasMarker);
     }
     function drawKey() {
+      var exampleCounterStart = 4;
+      var exampleCounterEnd = 8;
+      var counterTranslate = -2;
       var canvas = document.getElementById("keyCanvas");
       if (canvas.getContext) {
+        // Setup
         var ctx = canvas.getContext("2d");
         attribute = "key";
         ctx.font=fontSize + "px " + font;
-        rect(overallMargin,overallMargin,0, overallWidth,overallHeight,outerColor,false);
-        var gradientStart = getNumericMargin(3) + fontSize/3;
-        var gradientWidth = getNumericMargin(5) - getNumericMargin(3);
 
+        // Outside border
+        rect(overallMargin,overallMargin,0, overallWidth,overallHeight,outerColor,false);
+
+        // Peer review example data gradient
+        var gradientStart = getNumericMargin(3) + fontCenterOffset;
+        var gradientWidth = getNumericMargin(5) - getNumericMargin(3);
         drawGradient(gradientStart,50,gradientWidth,30,0.25,ctx);
 
         ctx.fillStyle=textColor;
-        ctx.fillText("Peer Reviews",250+fontSize,45+embeddedYMargin);
+        ctx.fillText("Peer Reviews",220+fontSize,45+embeddedYMargin);
 
         ctx.fillStyle=textColor;
         ctx.fillText("EXAMPLE", getNumericMargin(1),overallMargin+embeddedYMargin);
-        ctx.fillText(4,getNumericMargin(2),overallHeight);
-        ctx.fillText(5,getNumericMargin(3),overallHeight);
-        ctx.fillText(6,getNumericMargin(4),overallHeight);
-        ctx.fillText(7,getNumericMargin(5),overallHeight);
-        ctx.fillText(8,getNumericMargin(6),overallHeight);
 
+        // Start a key counter for peer reviews, but translate it to the right
+        for(var i=exampleCounterStart;i<=exampleCounterEnd;i++)
+          ctx.fillText(i,getNumericMargin(i+counterTranslate),overallHeight);
+
+        // Explain the key counter, aligning with fake data
         ctx.fillStyle=gradientOuterColor;
         ctx.fillText("Low",getNumericMargin(3),overallMargin+embeddedYMargin);
         ctx.fillText("Avg",getNumericMargin(3.5),overallMargin+embeddedYMargin);
         ctx.fillText("High",getNumericMargin(5),overallMargin+embeddedYMargin);
 
-
+        // To the right of the counter, show an example of manager and self rating
         drawMarkerLine(8,managerColor,managerRatingMarkerDepth);
         ctx.fillText("<- Manager Rating",getNumericMargin(8.1),overallMargin+embeddedYMargin);
         drawMarkerLine(8, selfColor,selfRatingMarkerDepth);
